@@ -1,27 +1,17 @@
+require('dotenv').config()
+import express from "express";
+import cors from "cors";
+const app = express();
+const PORT = process.env.PORT || 3001;
 
-
-import { PrismaClient } from "@prisma/client";
-
-
-const prisma = new PrismaClient();
-
-
-async function main() {
-    const post = await prisma.post.update({
-        where: { id: 1 },
-        data: { published: true },
-      })
-      console.log(post)
-  }
-
-  main().then(async () => {
-    await prisma.$disconnect()
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
   })
+);
+app.use(express.json());
 
-  .catch(async (err: Error) => {
-    console.error(err)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
-  
-  
+app.listen(PORT, () =>
+  console.log(`🚀 Server ready at: http://localhost:${PORT}`)
+);
