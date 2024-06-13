@@ -1,7 +1,8 @@
 require('dotenv').config()
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
-const app = express();
+import PublicRoutes from './src/routes/PublicRoutes'
+const app: Application = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(
@@ -11,6 +12,11 @@ app.use(
   })
 );
 app.use(express.json());
+
+
+app.use("/", PublicRoutes);
+
+
 
 app.listen(PORT, () =>
   console.log(`🚀 Server ready at: http://localhost:${PORT}`)

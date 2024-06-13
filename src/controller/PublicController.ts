@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 
 class PublicController {
   constructor() {}
-
   public register = async (req: Request, res: Response) => {
     const errorMessage = validateFields(req.body);
     if (errorMessage) return res.status(400).json({ error: errorMessage });
@@ -23,7 +22,7 @@ class PublicController {
       });
       return res.status(201).json(user);
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
     }
   };
 
@@ -46,7 +45,7 @@ class PublicController {
         expiresIn: maxAge,
       });
 
-      return res.status(200).json({ token });
+      return res.status(200).json({...user, token });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
@@ -54,9 +53,8 @@ class PublicController {
 
   public getMe = async (req: Request, res: Response) => {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
+      const token = req.headers.authorization;
       if (!token) return res.status(401).json({ error: "Token not Found" });
-
       const payload = jwt.verify(token, "secret") as {
         id: number;
         iat: number;
