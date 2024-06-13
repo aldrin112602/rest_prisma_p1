@@ -5,7 +5,7 @@
   "main": "npx ts-node index.ts",
   "scripts": {
     "dev": "nodemon index.ts",
-    "push": "git add . && git commit -m Damnn..\\wfuck\\wthis\\wBullshitt! && git push"
+    "push": "git add . && git commit -m Damnn_fuck_this_Bullshitt! && git push"
   },
   "keywords": [],
   "author": "",

@@ -67,3 +67,4 @@ class PublicController {
 }
 
 export default PublicController;
+
