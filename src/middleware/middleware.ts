@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { NextFunction, Response } from "express";
 import { RequestInterface } from "../interface/RequestInterface";
 import { PrismaClient } from "@prisma/client";
@@ -14,10 +15,13 @@ class MiddleWare {
     next: NextFunction
   ) => {
     try {
-      const token = req.headers.token;
-      if (!token) return res.status(401).json({ message: "Token not Found" });
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer "))
+        return res.status(401).json({ message: "Token not Found" });
 
-      const payload = jwt.verify(token as string, "secret") as {
+      const token = authHeader.split(" ")[1];
+
+      const payload = jwt.verify(token, process.env.JWT_SECRET as string) as {
         id: number;
         iat: number;
         exp: number;
@@ -30,14 +34,15 @@ class MiddleWare {
       });
 
       if (!user) {
-        return res.status(401).json("user not found");
+        return res.status(401).json({ message: "User not found" });
       }
 
       req.user = user;
       console.log("hitted from middleware.ts");
       next();
     } catch (error: any) {
-      console.log(error.message);
+      console.error(error.message);
+      return res.status(500).json({ error });
     }
   };
 }

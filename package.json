@@ -4,7 +4,8 @@
   "description": "",
   "main": "npx ts-node index.ts",
   "scripts": {
-    "dev": "nodemon index.ts"
+    "dev": "nodemon index.ts",
+    "push": "git add . && git commit -m Damnn..\\wfuck\\wthis\\wBullshitt! && git push"
   },
   "keywords": [],
   "author": "",
