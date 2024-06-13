@@ -11,9 +11,7 @@ class PublicController {
 
   public register = async (req: Request, res: Response) => {
     const errorMessage = validateFields(req.body);
-    if (errorMessage) {
-      return res.status(400).json({ error: errorMessage });
-    }
+    if (errorMessage) return res.status(400).json({ error: errorMessage });
 
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -31,16 +29,15 @@ class PublicController {
 
   public login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: "Invalid Credentials" });
-    }
+    const errorMessage = validateFields(req.body);
+    if (errorMessage) return res.status(400).json({ error: errorMessage });
 
     try {
       const user = await prisma.user.findUnique({
         where: { email },
       });
 
-      if (!user || !(await bcrypt.compare(password, user?.password || ''))) {
+      if (!user || !(await bcrypt.compare(password, user?.password || ""))) {
         return res.status(400).json({ error: "Invalid Credentials" });
       }
 
@@ -58,9 +55,7 @@ class PublicController {
   public getMe = async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
-        return res.status(401).json({ error: "Token not Found" });
-      }
+      if (!token) return res.status(401).json({ error: "Token not Found" });
 
       const payload = jwt.verify(token, "secret") as {
         id: number;
