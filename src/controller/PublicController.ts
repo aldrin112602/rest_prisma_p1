@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import validateFields from "../helper/validator";
 import { RequestInterface } from "../interface/RequestInterface";
-import { json } from "stream/consumers";
 const prisma = new PrismaClient();
 
 class PublicController {
@@ -17,23 +16,21 @@ class PublicController {
     if (errorMessage) return res.status(400).json({ error: errorMessage });
 
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      // const user = await prisma.user.create({
-      //   data: {
-      //     ...req.body,
-      //     password: hashedPassword,
-      //   },
-      // });
-      // return res.status(201).json(user);
+      const salt = 10;
+      const hashedPassword = await bcrypt.hash(req.body.password, salt)
+      const user = await prisma.user.create({
+        data: {
+          ...req.body,
+          password: hashedPassword,
+        },
+      });
+      return res.status(201).json(user);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }
   };
 
   public login = async (req: RequestInterface, res: Response) => {
-    const user = req.user;
-    if (user) return res.status(200).json(user);
-
     const { email, password } = req.body;
     const errorMessage = validateFields(req.body);
     if (errorMessage) return res.status(400).json({ error: errorMessage });
@@ -43,7 +40,7 @@ class PublicController {
         where: { email },
       });
 
-      if (!user || !(await bcrypt.compare(password, user?.password ?? "")))
+      if (!user || !(await bcrypt.compare(password, user.password ?? "")))
         return res.status(400).json({ error: "Invalid Credentials" });
 
       const maxAge = 24 * 60 * 60;
