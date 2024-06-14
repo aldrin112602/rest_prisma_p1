@@ -5,7 +5,7 @@ import mysql from 'mysql2'
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'typescriptdb'
+    database: 'prisma_db_1'
 })
 
 const poolConnection = mysqlDB.promise()

@@ -10,6 +10,8 @@ const prisma = new PrismaClient();
 class PublicController {
   constructor() {}
   public register = async (req: RequestInterface, res: Response) => {
+    const user = req.user;
+    if (user) return res.status(200).json(user);
     const errorMessage = validateFields(req.body);
     if (errorMessage) return res.status(400).json({ error: errorMessage });
 
@@ -28,6 +30,9 @@ class PublicController {
   };
 
   public login = async (req: RequestInterface, res: Response) => {
+    const user = req.user;
+    if (user) return res.status(200).json(user);
+
     const { email, password } = req.body;
     const errorMessage = validateFields(req.body);
     if (errorMessage) return res.status(400).json({ error: errorMessage });
