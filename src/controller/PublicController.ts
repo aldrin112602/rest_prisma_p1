@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import validateFields from "../helper/validator";
 import { RequestInterface } from "../interface/RequestInterface";
+import { json } from "stream/consumers";
 const prisma = new PrismaClient();
 
 class PublicController {
@@ -17,15 +18,15 @@ class PublicController {
 
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const user = await prisma.user.create({
-        data: {
-          ...req.body,
-          password: hashedPassword,
-        },
-      });
-      return res.status(201).json(user);
-    } catch (error) {
-      return res.status(500).json({ error });
+      // const user = await prisma.user.create({
+      //   data: {
+      //     ...req.body,
+      //     password: hashedPassword,
+      //   },
+      // });
+      // return res.status(201).json(user);
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
     }
   };
 

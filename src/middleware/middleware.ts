@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 class MiddleWare {
   constructor() {}
 
-  middleFunction = async (
+  public middleFunction = async (
     req: RequestInterface,
     res: Response,
     next: NextFunction
@@ -38,13 +38,12 @@ class MiddleWare {
       }
 
       req.user = user;
-      console.log("hitted from middleware.ts");
       next();
     } catch (error: any) {
-      console.error(error.message);
-      return res.status(500).json({ error });
+      return res.status(500).json({ error: error.message });
     }
   };
+
 }
 
 export default MiddleWare;
