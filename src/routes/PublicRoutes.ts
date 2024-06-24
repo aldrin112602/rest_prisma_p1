@@ -7,7 +7,8 @@ const middleWare = new MiddleWare();
 
 
 router.post('/register', publicController.register);
-router.post('/login', publicController.login   );
-router.get('/getMe',     middleWare.middleFunction, publicController.getMe   );
+router.post('/login', publicController.login);
+router.get('/getMe', middleWare.middleFunction, publicController.getMe);
+
 
 export default router;
