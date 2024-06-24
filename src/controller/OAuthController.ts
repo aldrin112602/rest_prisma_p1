@@ -1,6 +1,7 @@
 require("dotenv").config();
 import { Response, Request } from "express";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 
 class OAuthController {
   constructor() {}
@@ -18,10 +19,10 @@ class OAuthController {
 
       const url = `https://github.com/login/oauth/access_token`;
 
-      // Exchange code for access token using Axios
+
       const tokenResponse = await axios.post(
         url,
-        params.toString(), 
+        params.toString(),
         {
           headers: {
             Accept: "application/json",
@@ -32,7 +33,15 @@ class OAuthController {
 
       const { access_token } = tokenResponse.data;
 
-      // Use the access_token to fetch user data from GitHub
+      const maxAge = 24 * 60 * 60;
+      const token = jwt.sign(
+        { github_access_token: access_token },
+        process.env.JWT_SECRET as string,
+        {
+          expiresIn: maxAge,
+        }
+      );
+
       const userResponse = await axios.get("https://api.github.com/user", {
         headers: {
           Authorization: `token ${access_token}`,
@@ -41,7 +50,7 @@ class OAuthController {
 
       const userData = userResponse.data;
 
-      res.json(userData);
+      res.json({ token, userData });
     } catch (error) {
       console.error("GitHub OAuth error:", error);
       return res.status(500).json({ error: "Failed to complete GitHub OAuth" });
@@ -49,7 +58,7 @@ class OAuthController {
   };
 
   public facebook = async (req: Request, res: Response) => {
-    // Implement Facebook OAuth flow similarly if needed
+
   };
 }
 
